@@ -4,6 +4,7 @@ hrva-wiki
 HRVA's LocalWiki
 
 NOTE: This guide assumes that you have an S3 account with a bucket called `localwiki` where your backups will be stored.
+
 NOTE: I haven't gotten this to work yet!
 
 ## Standup New Instance with Backup on S3
