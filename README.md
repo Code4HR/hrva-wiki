@@ -5,8 +5,6 @@ HRVA's LocalWiki
 
 NOTE: This guide assumes that you have an S3 account with a bucket called `localwiki` where your backups will be stored.
 
-NOTE: I haven't gotten this to work yet!
-
 ## Standup New Instance with Backup on S3
 1. Create an Amazon EC2 key pair and download it.
 2. Create a new Amazon EC2 micro instance of Ubuntu 12.04 using the key pair.
@@ -79,7 +77,8 @@ NOTE: I haven't gotten this to work yet!
    $ s3cmd get s3://localwiki/BACKUP_FILE ~/BACKUP_FILE
    ```
    
-10. Restore the backup
+10. Get database password from /usr/share/localwiki/conf/localsettings.py
+11. Restore the backup
 
    ```
    $ cd ~
@@ -89,6 +88,9 @@ NOTE: I haven't gotten this to work yet!
    DROP DATABASE localwiki;
    \q
    $ sudo -u postgres createdb -T template_postgis localwiki
+   $ sudo -u postgres psql
+   ALTER USER localwiki WITH PASSWORD '<database-password>';
+   \q
    $ sudo -u postgres psql localwiki < localwiki.sql
    $ sudo rm -rf /usr/share/localwiki
    $ sudo cp -R usr.share.localwiki /usr/share/localwiki
