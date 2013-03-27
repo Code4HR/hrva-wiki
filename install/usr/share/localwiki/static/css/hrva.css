@@ -53,4 +53,6 @@
   background: none!important;
   padding: 0!important;
 }
-
+.front_page_regions ~ .includepage_right {
+    clear:right;
+}
