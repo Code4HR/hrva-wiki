@@ -1,0 +1,52 @@
+# LocalWiki Apache config file
+# After modifying and saving, you may need to run these commands:
+#     $ sudo a2ensite example.com
+#     $ sudo /etc/init.d/apache2 reload
+
+<VirtualHost *:80>
+    ServerAdmin webmaster@hrvawiki.org
+    ServerName hrvawiki.org
+    ServerAlias www.hrvawiki.org
+
+    RewriteEngine On
+    RewriteCond %{HTTPS} off
+    RewriteRule (.*) https://hrvawiki.org%{REQUEST_URI} [R=301]
+</VirtualHost>
+
+<VirtualHost *:443>
+    SSLEngine on
+
+    SSLCertificateFile /etc/apache2/ssl/hrvawiki_org.crt
+    SSLCertificateKeyFile /etc/apache2/ssl/hrvawiki.key
+    SSLCertificateChainFile /etc/apache2/ssl/hrvawiki_org.ca-bundle
+    ServerName hrvawiki.org
+    ServerAlias www.hrvawiki.org
+    ServerAdmin webmaster@hrvawiki.org
+
+    # The media directory, which contains user-uploaded content, should be set
+    # to force downloads. This is *extremely* important for security reasons.
+    # Note: The /media/ directory must be writable by the www-data user
+    Alias /media/ /usr/share/localwiki/media/
+    <Location /media/>
+        Header set Content-Disposition attachment
+    </Location>
+
+    Alias /static/ /usr/share/localwiki/static/
+    Alias /robots.txt /usr/share/localwiki/static/robots.txt
+    Alias /favicon.ico /usr/share/localwiki/static/favicon.ico
+
+    <Directory /usr/share/localwiki/>
+        Options -Indexes FollowSymLinks MultiViews
+        AllowOverride None
+        Order allow,deny
+        Allow from all
+    </Directory>
+
+    WSGIDaemonProcess example.com processes=2 threads=15 display-name=%{GROUP}
+    WSGIProcessGroup example.com
+    # For API Authorization header support
+    WSGIPassAuthorization On
+
+    WSGIScriptAlias / /usr/share/localwiki/deploy/localwiki.wsgi
+
+</VirtualHost>
